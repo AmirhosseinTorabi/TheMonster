@@ -9,22 +9,24 @@ var currentRound = 0
 
 func main() {
 	startGame()
-	winner := ""
+	winner := "" // "Player" || "Monster" || ""
 	for winner == "" {
-		winner = execute()
+		winner = executeRound()
 	}
-	endGame()
+	endGame(winner)
 }
 
 func startGame() {
-	interaction.Print()
+	interaction.PrintGreeting()
 }
 
-func execute() string {
+func executeRound() string {
 	currentRound++
 	isSpecialRound := currentRound%3 == 0
-	interaction.ShowAvalibaleAction(isSpecialRound)
-	userChoice := interaction.GetPlayerChoose(isSpecialRound)
+	interaction.ShowAvailableActions(isSpecialRound)
+	userChoice := interaction.GetPlayerChoice(isSpecialRound)
+	var playerHealth int
+	var monsterHealth int
 	if userChoice == "ATTACK" {
 		actions.AttackMonster(false)
 	} else if userChoice == "HEAL" {
@@ -33,14 +35,15 @@ func execute() string {
 		actions.AttackMonster(true)
 	}
 	actions.AttackPlayer()
-	playerHealth , monsterHealth :=actions.GetHealthAmounts()
-	if playerHealth<=0 {
+	playerHealth, monsterHealth = actions.GetHealthAmounts()
+	if playerHealth <= 0 {
 		return "Monster"
-	} else if monsterHealth <=0 {
+	} else if monsterHealth <= 0 {
 		return "Player"
 	}
 	return ""
 }
 
-func endGame() {
+func endGame(winner string) {
+	interaction.DeclareWinner(winner)
 }

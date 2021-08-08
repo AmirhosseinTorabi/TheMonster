@@ -7,44 +7,41 @@ import (
 
 var randSource = rand.NewSource(time.Now().UnixNano())
 var randGenerator = rand.New(randSource)
-
-var currentHealthPlayer = PLAYER_HEALTH
-var currentHealthMONSTER = MONSTER_HEALTH
-
+var currentMonsterHealth = MONSTER_HEALTH
+var currentPlayerHealth = PLAYER_HEALTH
 
 func AttackMonster(isSpecialAttack bool) {
-	minAttack := PLAYER_ATTACK_MIN_DMG
-	maxAttack := PLAYER_ATTACK_MAX_DMG
+	minAttackValue := PLAYER_ATTACK_MIN_DMG
+	maxAttackValue := PLAYER_ATTACK_MAX_DMG
 	if isSpecialAttack {
-		minAttack = PLAYER_ATTACK_MIN_DMG_SPECIAL
-		maxAttack = PLAYER_ATTACK_MAX_DMG_SPECIAL
+		minAttackValue = PLAYER_SPECIAL_ATTACK_MIN_DMG
+		maxAttackValue = PLAYER_SPECIAL_ATTACK_MAX_DMG
 	}
-	dmgHeal := GenerateRandBetween(minAttack, maxAttack)
-	currentHealthMONSTER -= dmgHeal
+	dmgValue := generateRandBetween(minAttackValue, maxAttackValue)
+	currentMonsterHealth -= dmgValue
 }
 
 func HealPlayer() {
-	healValue := GenerateRandBetween(PLAYER_HEAL_MAX, PLAYER_HEAL_MIN)
-	healValueDiff := PLAYER_HEALTH - currentHealthPlayer
-	if healValueDiff >= healValue {
-		currentHealthPlayer += healValue
+	healValue := generateRandBetween(PLAYER_HEAL_MIN_VALUE, PLAYER_HEAL_MAX_VALUE)
+	healthDiff := PLAYER_HEALTH - currentPlayerHealth
+	if healthDiff >= healValue {
+		currentPlayerHealth += healValue
 	} else {
-		currentHealthPlayer = PLAYER_HEALTH
+		currentPlayerHealth = PLAYER_HEALTH
 	}
 }
 
 func AttackPlayer() {
-	minAttack := MONSTER_ATTACK_MIN
-	maxAttack := MONSTER_ATTACK_MAX
-	dmgHeal := GenerateRandBetween(minAttack, maxAttack)
-	currentHealthPlayer -= dmgHeal
+	minAttackValue := MONSTER_ATTACK_MIN_DMG
+	maxAttackValue := MONSTER_ATTACK_MAX_DMG
+	dmgValue := generateRandBetween(minAttackValue, maxAttackValue)
+	currentPlayerHealth -= dmgValue
 }
 
-func GetHealthAmounts() (int , int)  {
-	return currentHealthPlayer , currentHealthMONSTER
+func GetHealthAmounts() (int, int) {
+	return currentPlayerHealth, currentMonsterHealth
 }
 
-func GenerateRandBetween(max, min int) int {
+func generateRandBetween(min int, max int) int {
 	return randGenerator.Intn(max-min) + min
 }
- 
