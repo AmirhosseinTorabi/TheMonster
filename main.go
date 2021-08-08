@@ -6,6 +6,7 @@ import (
 )
 
 var currentRound = 0
+var roundGame = []interaction.RoundData{}
 
 func main() {
 	startGame()
@@ -25,17 +26,28 @@ func executeRound() string {
 	isSpecialRound := currentRound%3 == 0
 	interaction.ShowAvailableActions(isSpecialRound)
 	userChoice := interaction.GetPlayerChoice(isSpecialRound)
-	var playerHealth int
-	var monsterHealth int
+	var playerAttackDmg int
+	var playerHealthValue int
+	var monsterAttackDmg int
 	if userChoice == "ATTACK" {
-		actions.AttackMonster(false)
+		playerAttackDmg = actions.AttackMonster(false)
 	} else if userChoice == "HEAL" {
-		actions.HealPlayer()
+		playerHealthValue = actions.HealPlayer()
 	} else {
-		actions.AttackMonster(true)
+		playerAttackDmg = actions.AttackMonster(true)
 	}
-	actions.AttackPlayer()
-	playerHealth, monsterHealth = actions.GetHealthAmounts()
+	monsterAttackDmg = actions.AttackPlayer()
+	playerHealth, monsterHealth := actions.GetHealthAmounts()
+	roundData := interaction.RoundData{
+		Action:        userChoice,
+		PlayerHealth:  playerHealth,
+		MonsterHealth: monsterHealth,
+		PlayerAttackDmg: playerAttackDmg,
+		PlayerHealValue: playerHealthValue,
+		MonsterAttackDmg: monsterAttackDmg,
+	}
+	interaction.PrintRoundStatictis(&roundData)
+	roundGame =append(roundGame,roundData)
 	if playerHealth <= 0 {
 		return "Monster"
 	} else if monsterHealth <= 0 {
@@ -46,4 +58,5 @@ func executeRound() string {
 
 func endGame(winner string) {
 	interaction.DeclareWinner(winner)
+	interaction.WriteToFile(&roundGame)
 }
